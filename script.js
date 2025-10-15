@@ -5,6 +5,9 @@ const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 
+// store sessionId locally to persist chat context
+let sessionId = localStorage.getItem("sessionId") || null;
+
 function addMessage(sender, text) {
   const msg = document.createElement("div");
   msg.className = sender;
@@ -26,10 +29,17 @@ async function sendMessage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message: userMessage })
+      body: JSON.stringify({ message: userMessage, session_id: sessionId })
     });
 
     const data = await response.json();
+
+    // update sessionId if Lambda returned a new one
+    if (data.session_id) {
+      sessionId = data.session_id;
+      localStorage.setItem("sessionId", sessionId);
+    }
+
     addMessage("bot", data.response || "No response from agent.");
   } catch (err) {
     addMessage("bot", "Error: " + err.message);
