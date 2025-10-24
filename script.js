@@ -7,6 +7,7 @@ const sendBtn = document.getElementById("sendBtn");
 
 // store sessionId locally to persist chat context
 let sessionId = localStorage.getItem("sessionId") || null;
+let isWaiting = false; // cooldown control
 
 // Helper to add text messages to chat
 function addMessage(sender, text) {
@@ -41,11 +42,18 @@ function addCitations(citations) {
 }
 
 async function sendMessage() {
+  // prevent spam/clicks too fast
+  if (isWaiting) return;
+
   const userMessage = messageInput.value.trim();
   if (!userMessage) return;
 
   addMessage("user", userMessage);
   messageInput.value = "";
+
+  // enter cooldown mode
+  isWaiting = true;
+  sendBtn.disabled = true;
 
   try {
     const response = await fetch(LAMBDA_URL, {
@@ -73,6 +81,12 @@ async function sendMessage() {
 
   } catch (err) {
     addMessage("bot", "Error: " + err.message);
+  } finally {
+    // release cooldown after 2 seconds
+    setTimeout(() => {
+      isWaiting = false;
+      sendBtn.disabled = false;
+    }, 2000);
   }
 }
 
