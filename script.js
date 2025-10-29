@@ -119,12 +119,12 @@ window.addEventListener("DOMContentLoaded", () => {
   // Clear chat button
   const clearBtn = document.getElementById("clearBtn");
   clearBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to clear the chat history?")) {
+    
       chatbox.innerHTML = "";
       localStorage.removeItem("chatHistory");
       localStorage.removeItem("sessionId");
       sessionId = null;
-    }
+    
   });
 });
 
