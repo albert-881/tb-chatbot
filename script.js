@@ -5,20 +5,31 @@ const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 
-// store sessionId locally to persist chat context
 let sessionId = localStorage.getItem("sessionId") || null;
-let isWaiting = false; // cooldown control
+let isWaiting = false;
 
-// Helper to add text messages to chat
+// ✅ Load chat history on page load
+window.addEventListener("DOMContentLoaded", loadChat);
+
+// ✅ Save chat before closing or refreshing
+window.addEventListener("beforeunload", saveChat);
+
+// --- Helpers ---
 function addMessage(sender, text) {
   const msg = document.createElement("div");
-  msg.className = sender;
-  msg.textContent = `${sender.toUpperCase()}: ${text}`;
+  msg.className = `message ${sender}`;
+  msg.innerHTML = text.replace(/\n/g, "<br>");
+
+  // Add timestamp
+  const time = document.createElement("span");
+  time.className = "timestamp";
+  time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  msg.appendChild(time);
+
   chatbox.appendChild(msg);
   chatbox.scrollTop = chatbox.scrollHeight;
 }
 
-// Helper to add document links/citations
 function addCitations(citations) {
   if (!citations || citations.length === 0) return;
 
@@ -41,8 +52,28 @@ function addCitations(citations) {
   chatbox.scrollTop = chatbox.scrollHeight;
 }
 
+// --- Typing Indicator ---
+function showTyping() {
+  const typing = document.createElement("div");
+  typing.className = "message bot typing";
+  typing.textContent = "Bot is typing...";
+  chatbox.appendChild(typing);
+  chatbox.scrollTop = chatbox.scrollHeight;
+  return typing;
+}
+
+// --- Chat Persistence ---
+function saveChat() {
+  localStorage.setItem("chatHistory", chatbox.innerHTML);
+}
+
+function loadChat() {
+  const saved = localStorage.getItem("chatHistory");
+  if (saved) chatbox.innerHTML = saved;
+}
+
+// --- Send Message ---
 async function sendMessage() {
-  // prevent spam/clicks too fast
   if (isWaiting) return;
 
   const userMessage = messageInput.value.trim();
@@ -51,38 +82,37 @@ async function sendMessage() {
   addMessage("user", userMessage);
   messageInput.value = "";
 
-  // enter cooldown mode
   isWaiting = true;
   sendBtn.disabled = true;
+
+  // show typing animation
+  const typingIndicator = showTyping();
 
   try {
     const response = await fetch(LAMBDA_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: userMessage, session_id: sessionId })
     });
 
     const data = await response.json();
 
-    // update sessionId if Lambda returned a new one
+    typingIndicator.remove();
+
+    // update session
     if (data.session_id) {
       sessionId = data.session_id;
       localStorage.setItem("sessionId", sessionId);
     }
 
     addMessage("bot", data.response || "No response from agent.");
-
-    // ✅ Show citations if they exist
-    if (data.citations) {
-      addCitations(data.citations);
-    }
+    if (data.citations) addCitations(data.citations);
 
   } catch (err) {
-    addMessage("bot", "Error: " + err.message);
+    typingIndicator.remove();
+    addMessage("bot", "⚠️ Error: " + err.message);
   } finally {
-    // release cooldown after 2 seconds
+    saveChat(); // persist latest messages
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;
