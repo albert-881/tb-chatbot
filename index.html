@@ -178,6 +178,25 @@
   font-size: 0.9rem;
   color: #333;
 }
+#clearBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #444;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+#clearBtn:hover {
+  background: #e5e7eb;
+}
+
+#clearBtn:active {
+  background: #d1d5db;
+}
 
 
   </style>
@@ -190,6 +209,8 @@
       <input type="text" id="messageInput" placeholder="Type your message..." />
       <button id="sendBtn">Send</button>
     </div>
+    <button id="clearBtn">Clear Chat</button>
+
   </div>
 
   <script src="script.js"></script>

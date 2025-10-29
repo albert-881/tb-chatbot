@@ -124,3 +124,14 @@ sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
+
+const clearBtn = document.getElementById("clearBtn");
+
+clearBtn.addEventListener("click", () => {
+  if (confirm("Are you sure you want to clear the chat history?")) {
+    chatbox.innerHTML = "";
+    localStorage.removeItem("chatHistory");
+    localStorage.removeItem("sessionId");
+    sessionId = null;
+  }
+});
