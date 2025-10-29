@@ -8,12 +8,6 @@ const sendBtn = document.getElementById("sendBtn");
 let sessionId = localStorage.getItem("sessionId") || null;
 let isWaiting = false;
 
-// ✅ Load chat history on page load
-window.addEventListener("DOMContentLoaded", loadChat);
-
-// ✅ Save chat before closing or refreshing
-window.addEventListener("beforeunload", saveChat);
-
 // --- Helpers ---
 function addMessage(sender, text) {
   const msg = document.createElement("div");
@@ -52,7 +46,7 @@ function addCitations(citations) {
   chatbox.scrollTop = chatbox.scrollHeight;
 }
 
-// --- Typing Indicator ---
+// Typing indicator
 function showTyping() {
   const typing = document.createElement("div");
   typing.className = "message bot typing";
@@ -62,7 +56,7 @@ function showTyping() {
   return typing;
 }
 
-// --- Chat Persistence ---
+// Chat persistence
 function saveChat() {
   localStorage.setItem("chatHistory", chatbox.innerHTML);
 }
@@ -72,7 +66,7 @@ function loadChat() {
   if (saved) chatbox.innerHTML = saved;
 }
 
-// --- Send Message ---
+// Send message
 async function sendMessage() {
   if (isWaiting) return;
 
@@ -85,7 +79,6 @@ async function sendMessage() {
   isWaiting = true;
   sendBtn.disabled = true;
 
-  // show typing animation
   const typingIndicator = showTyping();
 
   try {
@@ -96,10 +89,9 @@ async function sendMessage() {
     });
 
     const data = await response.json();
-
     typingIndicator.remove();
 
-    // update session
+    // Update session
     if (data.session_id) {
       sessionId = data.session_id;
       localStorage.setItem("sessionId", sessionId);
@@ -112,7 +104,7 @@ async function sendMessage() {
     typingIndicator.remove();
     addMessage("bot", "⚠️ Error: " + err.message);
   } finally {
-    saveChat(); // persist latest messages
+    saveChat();
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;
@@ -120,18 +112,26 @@ async function sendMessage() {
   }
 }
 
+// --- Event listeners ---
+window.addEventListener("DOMContentLoaded", () => {
+  loadChat();
+
+  // Clear chat button
+  const clearBtn = document.getElementById("clearBtn");
+  clearBtn.addEventListener("click", () => {
+    if (confirm("Are you sure you want to clear the chat history?")) {
+      chatbox.innerHTML = "";
+      localStorage.removeItem("chatHistory");
+      localStorage.removeItem("sessionId");
+      sessionId = null;
+    }
+  });
+});
+
 sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-const clearBtn = document.getElementById("clearBtn");
-
-clearBtn.addEventListener("click", () => {
-  if (confirm("Are you sure you want to clear the chat history?")) {
-    chatbox.innerHTML = "";
-    localStorage.removeItem("chatHistory");
-    localStorage.removeItem("sessionId");
-    sessionId = null;
-  }
-});
+// Save chat before closing or refreshing
+window.addEventListener("beforeunload", saveChat);
