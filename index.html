@@ -15,11 +15,14 @@
       height: 100vh;
       margin: 0;
       color: #333;
+      padding: 10px;
     }
 
     .chat-container {
-      width: 700px;
-      height: 650px;
+      width: 100%;
+      max-width: 700px;
+      height: 90vh;
+      max-height: 650px;
       background: #ffffffcc;
       border-radius: 20px;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
@@ -39,8 +42,8 @@
       background: linear-gradient(90deg, #2b63ff, #4a7dff);
       color: #fff;
       text-align: center;
-      padding: 18px;
-      font-size: 1.2rem;
+      padding: 16px;
+      font-size: 1.1rem;
       font-weight: 600;
       letter-spacing: 0.5px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -48,7 +51,7 @@
 
     #chatbox {
       flex: 1;
-      padding: 20px;
+      padding: 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -86,8 +89,9 @@
       display: flex;
       align-items: center;
       border-top: 1px solid #e5e7eb;
-      padding: 12px;
+      padding: 10px;
       background: #fff;
+      gap: 10px;
     }
 
     #messageInput {
@@ -108,8 +112,7 @@
     }
 
     #sendBtn {
-      margin-left: 10px;
-      padding: 12px 20px;
+      padding: 12px 18px;
       background: linear-gradient(135deg, #2b63ff, #4a7dff);
       color: white;
       border: none;
@@ -118,6 +121,7 @@
       font-weight: 500;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       box-shadow: 0 3px 8px rgba(43, 99, 255, 0.3);
+      flex-shrink: 0;
     }
 
     #sendBtn:hover {
@@ -140,65 +144,115 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px);
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Timestamp */
+    .timestamp {
+      display: block;
+      font-size: 0.75rem;
+      opacity: 0.6;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Typing animation */
+    .typing {
+      opacity: 0.6;
+      font-style: italic;
+      animation: blink 1s infinite alternate;
+    }
+
+    @keyframes blink {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    /* Citations section */
+    .citations {
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    /* Clear button */
+    #clearBtn {
+      margin: 10px;
+      padding: 10px 20px;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #444;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      align-self: flex-end;
+    }
+
+    #clearBtn:hover {
+      background: #e5e7eb;
+    }
+
+    #clearBtn:active {
+      background: #d1d5db;
+    }
+
+    /* --- RESPONSIVE DESIGN --- */
+    @media (max-width: 768px) {
+      .chat-container {
+        height: 85vh;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      .chat-header {
+        font-size: 1rem;
+        padding: 14px;
+      }
+
+      #messageInput {
+        font-size: 0.9rem;
+      }
+
+      #sendBtn {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+
+      #clearBtn {
+        font-size: 0.85rem;
+        padding: 8px 14px;
       }
     }
-    /* Timestamp */
-.timestamp {
-  display: block;
-  font-size: 0.75rem;
-  opacity: 0.6;
-  margin-top: 4px;
-  text-align: right;
-}
 
-/* Typing animation */
-.typing {
-  opacity: 0.6;
-  font-style: italic;
-  animation: blink 1s infinite alternate;
-}
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+      }
 
-@keyframes blink {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
-}
+      .chat-container {
+        border-radius: 0;
+        height: 100vh;
+        max-height: none;
+      }
 
-/* Citations section */
-.citations {
-  background: #f3f4f6;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 0.9rem;
-  color: #333;
-}
-#clearBtn {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  cursor: pointer;
-  color: #444;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
+      #inputArea {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px;
+      }
 
-#clearBtn:hover {
-  background: #e5e7eb;
-}
+      #sendBtn {
+        width: 100%;
+      }
 
-#clearBtn:active {
-  background: #d1d5db;
-}
-
-
+      #clearBtn {
+        align-self: center;
+        width: 90%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -210,7 +264,6 @@
       <button id="sendBtn">Send</button>
     </div>
     <button id="clearBtn">Clear Chat</button>
-
   </div>
 
   <script src="script.js"></script>
