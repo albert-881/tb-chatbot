@@ -4,7 +4,6 @@ const LAMBDA_URL = "https://z2fkpefkca.execute-api.us-east-1.amazonaws.com/defau
 const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
-const suggestionsContainer = document.getElementById("suggestions");
 
 let sessionId = localStorage.getItem("sessionId") || null;
 let isWaiting = false;
@@ -15,6 +14,7 @@ function addMessage(sender, text) {
   msg.className = `message ${sender}`;
   msg.innerHTML = text.replace(/\n/g, "<br>");
 
+  // Add timestamp
   const time = document.createElement("span");
   time.className = "timestamp";
   time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -46,49 +46,27 @@ function addCitations(citations) {
   chatbox.scrollTop = chatbox.scrollHeight;
 }
 
-// --- Suggestion Buttons ---
-function showSuggestions(options) {
-  suggestionsContainer.innerHTML = "";
-  options.forEach(text => {
-    const btn = document.createElement("button");
-    btn.className = "suggestion-btn";
-    btn.textContent = text;
-    btn.addEventListener("click", () => {
-      messageInput.value = text;
-      sendMessage();
-      suggestionsContainer.innerHTML = "";
-    });
-    suggestionsContainer.appendChild(btn);
-  });
-}
-
+// Typing indicator
 function showTyping() {
   const typing = document.createElement("div");
   typing.className = "message bot typing";
-
-  // Add three animated dots
-  typing.innerHTML = `
-    <span class="typing-dot"></span>
-    <span class="typing-dot"></span>
-    <span class="typing-dot"></span>
-  `;
-
+  typing.textContent = "Bot is typing...";
   chatbox.appendChild(typing);
   chatbox.scrollTop = chatbox.scrollHeight;
   return typing;
 }
 
-
-// Persistence
+// Chat persistence
 function saveChat() {
   localStorage.setItem("chatHistory", chatbox.innerHTML);
 }
+
 function loadChat() {
   const saved = localStorage.getItem("chatHistory");
   if (saved) chatbox.innerHTML = saved;
 }
 
-// --- Main sendMessage ---
+// Send message
 async function sendMessage() {
   if (isWaiting) return;
 
@@ -97,6 +75,7 @@ async function sendMessage() {
 
   addMessage("user", userMessage);
   messageInput.value = "";
+
   isWaiting = true;
   sendBtn.disabled = true;
 
@@ -112,6 +91,7 @@ async function sendMessage() {
     const data = await response.json();
     typingIndicator.remove();
 
+    // Update session
     if (data.session_id) {
       sessionId = data.session_id;
       localStorage.setItem("sessionId", sessionId);
@@ -119,18 +99,6 @@ async function sendMessage() {
 
     addMessage("bot", data.response || "No response from agent.");
     if (data.citations) addCitations(data.citations);
-
-    // 🔹 Show static or dynamic suggestions
-    if (data.suggestions && data.suggestions.length > 0) {
-      showSuggestions(data.suggestions);
-    } else {
-      showSuggestions([
-        "Can you explain that further?",
-        "Give me an example.",
-        "Summarize that.",
-        "What’s the main takeaway?"
-      ]);
-    }
 
   } catch (err) {
     typingIndicator.remove();
@@ -144,20 +112,26 @@ async function sendMessage() {
   }
 }
 
-// --- Events ---
+// --- Event listeners ---
 window.addEventListener("DOMContentLoaded", () => {
   loadChat();
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    chatbox.innerHTML = "";
-    suggestionsContainer.innerHTML = "";
-    localStorage.removeItem("chatHistory");
-    localStorage.removeItem("sessionId");
-    sessionId = null;
+
+  // Clear chat button
+  const clearBtn = document.getElementById("clearBtn");
+  clearBtn.addEventListener("click", () => {
+    
+      chatbox.innerHTML = "";
+      localStorage.removeItem("chatHistory");
+      localStorage.removeItem("sessionId");
+      sessionId = null;
+    
   });
 });
 
 sendBtn.addEventListener("click", sendMessage);
-messageInput.addEventListener("keypress", e => {
+messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
+
+// Save chat before closing or refreshing
 window.addEventListener("beforeunload", saveChat);
