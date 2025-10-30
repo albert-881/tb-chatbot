@@ -4,6 +4,7 @@ const LAMBDA_URL = "https://z2fkpefkca.execute-api.us-east-1.amazonaws.com/defau
 const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
+const suggestionsContainer = document.getElementById("suggestions");
 
 let sessionId = localStorage.getItem("sessionId") || null;
 let isWaiting = false;
@@ -14,7 +15,6 @@ function addMessage(sender, text) {
   msg.className = `message ${sender}`;
   msg.innerHTML = text.replace(/\n/g, "<br>");
 
-  // Add timestamp
   const time = document.createElement("span");
   time.className = "timestamp";
   time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -56,6 +56,22 @@ function showTyping() {
   return typing;
 }
 
+// Show suggestion buttons
+function showSuggestions(options) {
+  suggestionsContainer.innerHTML = "";
+  options.forEach(text => {
+    const btn = document.createElement("button");
+    btn.className = "suggestion-btn";
+    btn.textContent = text;
+    btn.addEventListener("click", () => {
+      messageInput.value = text;
+      sendMessage();
+      suggestionsContainer.innerHTML = "";
+    });
+    suggestionsContainer.appendChild(btn);
+  });
+}
+
 // Chat persistence
 function saveChat() {
   localStorage.setItem("chatHistory", chatbox.innerHTML);
@@ -66,7 +82,7 @@ function loadChat() {
   if (saved) chatbox.innerHTML = saved;
 }
 
-// Send message
+// --- Main sendMessage ---
 async function sendMessage() {
   if (isWaiting) return;
 
@@ -97,8 +113,21 @@ async function sendMessage() {
       localStorage.setItem("sessionId", sessionId);
     }
 
+    // Show bot response
     addMessage("bot", data.response || "No response from agent.");
     if (data.citations) addCitations(data.citations);
+
+    // Show suggestions from API or fallback
+    if (data.suggestions && data.suggestions.length > 0) {
+      showSuggestions(data.suggestions);
+    } else {
+      showSuggestions([
+        "What are my benefits?",
+        "What are my days off?",
+        "What can you tell me about the handbook",
+        "What is Truebooks Partners?"
+      ]);
+    }
 
   } catch (err) {
     typingIndicator.remove();
@@ -108,7 +137,7 @@ async function sendMessage() {
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;
-    }, 2000);
+    }, 500); // short delay for smooth UX
   }
 }
 
@@ -119,12 +148,11 @@ window.addEventListener("DOMContentLoaded", () => {
   // Clear chat button
   const clearBtn = document.getElementById("clearBtn");
   clearBtn.addEventListener("click", () => {
-    
-      chatbox.innerHTML = "";
-      localStorage.removeItem("chatHistory");
-      localStorage.removeItem("sessionId");
-      sessionId = null;
-    
+    chatbox.innerHTML = "";
+    suggestionsContainer.innerHTML = "";
+    localStorage.removeItem("chatHistory");
+    localStorage.removeItem("sessionId");
+    sessionId = null;
   });
 });
 
