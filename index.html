@@ -134,51 +134,6 @@
       box-shadow: 0 2px 6px rgba(43, 99, 255, 0.25);
     }
 
-    /* Smooth scrollbar */
-    #chatbox::-webkit-scrollbar {
-      width: 6px;
-    }
-    #chatbox::-webkit-scrollbar-thumb {
-      background-color: #c5c9d6;
-      border-radius: 3px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Timestamp */
-    .timestamp {
-      display: block;
-      font-size: 0.75rem;
-      opacity: 0.6;
-      margin-top: 4px;
-      text-align: right;
-    }
-
-    /* Typing animation */
-    .typing {
-      opacity: 0.6;
-      font-style: italic;
-      animation: blink 1s infinite alternate;
-    }
-
-    @keyframes blink {
-      from { opacity: 0.4; }
-      to { opacity: 1; }
-    }
-
-    /* Citations section */
-    .citations {
-      background: #f3f4f6;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      color: #333;
-    }
-
-    /* Clear button */
     #clearBtn {
       margin: 10px;
       padding: 10px 20px;
@@ -192,66 +147,46 @@
       align-self: flex-end;
     }
 
-    #clearBtn:hover {
-      background: #e5e7eb;
+    #clearBtn:hover { background: #e5e7eb; }
+    #clearBtn:active { background: #d1d5db; }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #fff;
+      border-top: 1px solid #e5e7eb;
     }
 
-    #clearBtn:active {
-      background: #d1d5db;
+    .suggestion-btn {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 20px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
     }
 
-    /* --- RESPONSIVE DESIGN --- */
+    .suggestion-btn:hover { background: #e5e7eb; }
+    .suggestion-btn:active { background: #d1d5db; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 768px) {
-      .chat-container {
-        height: 85vh;
-      }
-
-      .chat-header {
-        font-size: 1rem;
-        padding: 14px;
-      }
-
-      #messageInput {
-        font-size: 0.9rem;
-      }
-
-      #sendBtn {
-        padding: 10px 14px;
-        font-size: 0.9rem;
-      }
-
-      #clearBtn {
-        font-size: 0.85rem;
-        padding: 8px 14px;
-      }
+      .chat-container { height: 85vh; }
+      .chat-header { font-size: 1rem; padding: 14px; }
+      #clearBtn { font-size: 0.85rem; padding: 8px 14px; }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 0;
-      }
-
-      .chat-container {
-        border-radius: 0;
-        height: 100vh;
-        max-height: none;
-      }
-
-      #inputArea {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 10px;
-      }
-
-      #sendBtn {
-        width: 100%;
-      }
-
-      #clearBtn {
-        align-self: center;
-        width: 90%;
-      }
+      .chat-container { border-radius: 0; height: 100vh; }
+      #inputArea { flex-direction: column; align-items: stretch; }
+      #sendBtn, #clearBtn { width: 100%; }
     }
   </style>
 </head>
@@ -259,10 +194,13 @@
   <div class="chat-container">
     <div class="chat-header">💬 Chat with My AWS Bedrock Agent</div>
     <div id="chatbox"></div>
+
     <div id="inputArea">
       <input type="text" id="messageInput" placeholder="Type your message..." />
       <button id="sendBtn">Send</button>
     </div>
+
+    <div id="suggestions"></div>
     <button id="clearBtn">Clear Chat</button>
   </div>
 
