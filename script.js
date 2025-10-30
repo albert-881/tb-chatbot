@@ -62,15 +62,22 @@ function showSuggestions(options) {
   });
 }
 
-// Typing indicator
 function showTyping() {
   const typing = document.createElement("div");
   typing.className = "message bot typing";
-  typing.textContent = "Bot is typing...";
+
+  // Add three animated dots
+  typing.innerHTML = `
+    <span class="typing-dot"></span>
+    <span class="typing-dot"></span>
+    <span class="typing-dot"></span>
+  `;
+
   chatbox.appendChild(typing);
   chatbox.scrollTop = chatbox.scrollHeight;
   return typing;
 }
+
 
 // Persistence
 function saveChat() {
