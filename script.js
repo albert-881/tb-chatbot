@@ -15,11 +15,7 @@ function addMessage(sender, text) {
   msg.className = `message ${sender}`;
   msg.innerHTML = text.replace(/\n/g, "<br>");
 
-  const time = document.createElement("span");
-  time.className = "timestamp";
-  time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  msg.appendChild(time);
-
+  
   chatbox.appendChild(msg);
   chatbox.scrollTop = chatbox.scrollHeight;
 }
@@ -36,7 +32,7 @@ function addCitations(citations) {
     link.href = cite.url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.textContent = `📄 ${cite.title}`;
+    
     link.style.display = "block";
     link.style.marginTop = "4px";
     citationContainer.appendChild(link);
