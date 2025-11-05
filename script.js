@@ -32,15 +32,21 @@ function addCitations(citations) {
     link.href = cite.url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    
+    link.textContent = cite.title || cite.url; // ✅ add this line
     link.style.display = "block";
     link.style.marginTop = "4px";
+    link.style.color = "#2b63ff"; // optional for style
+    link.style.textDecoration = "none";
+    link.style.fontWeight = "500";
+    link.addEventListener("mouseover", () => link.style.textDecoration = "underline");
+    link.addEventListener("mouseout", () => link.style.textDecoration = "none");
     citationContainer.appendChild(link);
   });
 
   chatbox.appendChild(citationContainer);
   chatbox.scrollTop = chatbox.scrollHeight;
 }
+
 
 // Typing indicator
 function showTyping() {
