@@ -23,29 +23,39 @@ function addMessage(sender, text) {
 function addCitations(citations) {
   if (!citations || citations.length === 0) return;
 
+  console.log("Citations received:", citations); // ✅ check what's coming in
+
   const citationContainer = document.createElement("div");
   citationContainer.className = "citations";
   citationContainer.innerHTML = `<strong>Referenced Documents:</strong>`;
 
   citations.forEach(cite => {
+    if (!cite.url) return; // skip if no URL
+
     const link = document.createElement("a");
     link.href = cite.url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.textContent = cite.title || cite.url; // ✅ add this line
+    link.textContent = cite.title || cite.url;
+
     link.style.display = "block";
     link.style.marginTop = "4px";
-    link.style.color = "#2b63ff"; // optional for style
+    link.style.color = "#2b63ff";
     link.style.textDecoration = "none";
     link.style.fontWeight = "500";
     link.addEventListener("mouseover", () => link.style.textDecoration = "underline");
     link.addEventListener("mouseout", () => link.style.textDecoration = "none");
+
     citationContainer.appendChild(link);
   });
 
-  chatbox.appendChild(citationContainer);
-  chatbox.scrollTop = chatbox.scrollHeight;
+  // Only append if we actually have valid links
+  if (citationContainer.childElementCount > 1) {
+    chatbox.appendChild(citationContainer);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
 }
+
 
 
 // Typing indicator
