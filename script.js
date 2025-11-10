@@ -132,14 +132,7 @@ async function sendMessage() {
     // Show suggestions from API or fallback
     if (data.suggestions && data.suggestions.length > 0) {
       showSuggestions(data.suggestions);
-    } else {
-      showSuggestions([
-        "What are my benefits?",
-        "What are my days off?",
-        "What can you tell me about the handbook",
-        "What is Truebooks Partners?"
-      ]);
-    }
+    } 
 
   } catch (err) {
     typingIndicator.remove();
