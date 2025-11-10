@@ -149,7 +149,7 @@ async function sendMessage() {
 // --- Event listeners ---
 window.addEventListener("DOMContentLoaded", () => {
   loadChat();
-
+  localStorage.clear();
   document.querySelectorAll(".suggestion-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       messageInput.value = btn.textContent;
