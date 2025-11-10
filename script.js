@@ -157,6 +157,13 @@ async function sendMessage() {
 window.addEventListener("DOMContentLoaded", () => {
   loadChat();
 
+  document.querySelectorAll(".suggestion-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      messageInput.value = btn.textContent;
+      sendMessage();
+    });
+  });
+  
   // Clear chat button
   const clearBtn = document.getElementById("clearBtn");
   clearBtn.addEventListener("click", () => {

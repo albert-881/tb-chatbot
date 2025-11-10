@@ -259,7 +259,18 @@ body {
 <body>
   <div class="chat-container">
     <div class="chat-header">CHATBOT DEMO</div>
-    <div id="chatbox"></div>
+    <div id="chatbox">
+      <div class="message bot">
+        <p><strong>Hello there!</strong><br>Type your question. Here are some useful samples:</p>
+        <div class="suggestions" style="margin-top: 10px; border: none; background: transparent; padding: 0;">
+          <button class="suggestion-btn">Write a formula to construct a full name from the first and last name.</button>
+          <button class="suggestion-btn">How do you change a column type?</button>
+          <button class="suggestion-btn">Write sample code to call the TeamDesk REST API select method from Python.</button>
+        </div>
+      </div>
+    </div>
+    
+    
     <div id="suggestions" class="suggestions"></div>
     <div id="inputArea">
       <input type="text" id="messageInput" placeholder="Type your message..." />
