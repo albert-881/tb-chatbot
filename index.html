@@ -145,6 +145,29 @@ body {
   transform: translateY(0);
   box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
+/* Clear button next to Send */
+#clearBtn {
+  margin-left: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #2563eb, #4a7dff);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+
+#clearBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
+}
+
+#clearBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
 
 /* Scrollbar */
 #chatbox::-webkit-scrollbar {
@@ -274,9 +297,10 @@ body {
     <div id="suggestions" class="suggestions"></div>
     <div id="inputArea">
       <input type="text" id="messageInput" placeholder="Type your message..." />
+      <button id="clearBtn">Clear Chat</button>
       <button id="sendBtn">Send</button>
     </div>
-    <button id="clearBtn">Clear Chat</button>
+    
 
   </div>
 
